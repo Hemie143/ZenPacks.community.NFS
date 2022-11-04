@@ -1,0 +1,3 @@
+[zenoss.zenpacks]
+ZenPacks.community.NFS = ZenPacks.community.NFS
+

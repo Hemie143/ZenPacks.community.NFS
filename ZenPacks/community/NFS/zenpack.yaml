@@ -1,0 +1,31 @@
+name: ZenPacks.community.NFS
+
+zProperties:
+  DEFAULTS:
+    category: NFSCustom
+  zNFSMountFilename:
+    default: zenoss_placeholder.txt
+    description: Filename to check
+  zNFSMountFileContent:
+    default: hello
+    description: Content to check within placeholder file
+
+classes:
+  FileSystemNFSCustom:
+    base: [zenpacklib.Component]
+    meta_type: fileSystemNFSCustom
+  FileSystemNFS:
+    base: [FileSystemNFSCustom]
+    label: NFS Remote Mount
+    properties:
+      status:
+        label: Status
+
+class_relationships:
+  - Products.ZenModel.Device.Device 1:MC FileSystemNFS
+
+device_classes:
+  /Server/SSH:
+    templates:
+      FileSystemNFS:
+        targetPythonClass: ZenPacks.community.NFS.FileSystemNFS
