@@ -3,6 +3,8 @@ name: ZenPacks.community.NFS
 zProperties:
   DEFAULTS:
     category: NFSCustom
+  zNFSFileSystemIgnoreNames:
+    description: NFS Filesystem names to ignore (regular expression)
   zNFSMountFilename:
     default: zenoss_placeholder.txt
     description: Filename to check
@@ -17,15 +19,78 @@ classes:
   FileSystemNFS:
     base: [FileSystemNFSCustom]
     label: NFS Remote Mount
+    monitoring_templates: [FileSystemNFS]
     properties:
-      status:
-        label: Status
+      type:
+        label: Type
+      folderstatus:
+        label: Folder Status
+        datapoint: lsfolder_fsstatus
+        renderer: Zenoss.render.severity
+        default: 2
+      filepresent:
+        label: File present
+        datapoint: lsfolder_filestatus
+        renderer: Zenoss.render.severity
+        default: 2
+      filecontent:
+        label: File content
+        datapoint: catfile_filecontent
+        renderer: Zenoss.render.severity
+        default: 2
+      storageDevice:
+        label: Storage Device
+        grid_display: false
+      mount:
+        label: Mount
+        grid_display: false
 
 class_relationships:
   - Products.ZenModel.Device.Device 1:MC FileSystemNFS
+  # - ZenPacks.zenoss.LinuxMonitor.LinuxDevice 1:MC FileSystemNFS
 
 device_classes:
-  /Server/SSH:
+  /Server/SSH/Linux:
     templates:
       FileSystemNFS:
+        description: "Monitoring the availability of an NFS Filesystem"
         targetPythonClass: ZenPacks.community.NFS.FileSystemNFS
+        datasources:
+          lsfolder:
+            type: COMMAND
+            usessh: true
+            commandTemplate: |-
+                $$ZENOTHING
+                ls -la ${here/mount}
+            parser: ZenPacks.community.NFS.parsers.fsls
+            component: ${here/id}
+            eventClass: /Ignore
+            severity: Info
+            datapoints:
+              fsstatus:
+                rrdtype: GAUGE
+                rrdmin: 0
+                rrdmax: 1
+              filestatus:
+                rrdtype: GAUGE
+                rrdmin: 0
+                rrdmax: 1
+          catfile:
+            type: COMMAND
+            usessh: true
+            commandTemplate: |-
+                $$ZENOTHING
+                cat ${here/mount}/${here/zNFSMountFilename}
+            parser: ZenPacks.community.NFS.parsers.catfile
+            component: ${here/id}
+            eventClass: /Ignore
+            severity: Info
+            datapoints:
+              filecontent:
+                rrdtype: GAUGE
+                rrdmin: 0
+                rrdmax: 1
+
+event_classes:
+  /Status/Filesystem/NFS:
+    remove: false
