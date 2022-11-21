@@ -23,7 +23,6 @@ class nfs(CommandPlugin):
     def process(self, device, results, log):
         """Process results. Return iterable of datamaps or None."""
         NFSFileSystemIgnoreNames = getattr(device, 'zNFSFileSystemIgnoreNames', None)
-        NFSFileSystemIgnoreNames = '\/mnt\/coordinated-status'
         rm = self.relMap()
         dflines = results.split('\n')
         for line in dflines:
