@@ -38,7 +38,7 @@ class nfs(CommandPlugin):
                 continue
 
             if NFSFileSystemIgnoreNames and re.search(NFSFileSystemIgnoreNames, storage_mount):
-                log.info("{}: skipping {} (zNFSFileSystemIgnoreNames)".format(device.id, storage_mount))
+                log.info('{}: skipping {} (zNFSFileSystemIgnoreNames)'.format(device.id, storage_mount))
                 continue
 
             om = self.objectMap()

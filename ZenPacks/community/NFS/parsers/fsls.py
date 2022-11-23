@@ -24,6 +24,7 @@ class fsls(CommandParser):
             mount = dp.data['mount']
             if cmd.result.exitCode > 0:
                 # Folder and file status
+                log.debug('Output exit code: {}'.format(cmd.result.exitCode))
                 result.values.append((dp, ZenEventClasses.Error))           # Could not access the filesystem
                 if dp.id == 'fsstatus':
                     result.events.append(dict(
@@ -44,6 +45,7 @@ class fsls(CommandParser):
                         component=cmd.component,
                     ))
             else:
+                log.debug('dp.id: {}'.format(dp.id))
                 if dp.id == 'fsstatus':
                     result.values.append((dp, ZenEventClasses.Clear))       # Filesystem is available
                     result.events.append(dict(
@@ -56,7 +58,8 @@ class fsls(CommandParser):
                     ))
                 elif dp.id == 'filestatus':
                     for line in cmd.result.output.splitlines():
-                        if len(line.split()) != 9:
+                        log.debug('filestatus - line: {} = {}'.format(line, line.split()))
+                        if len(line.split()) < 9:
                             continue
                         else:
                             filename = line.split()[8]
@@ -70,6 +73,7 @@ class fsls(CommandParser):
                                     eventClass='/Status/Filesystem/NFS',
                                     component=cmd.component,
                                 ))
+                                break
                     else:
                         result.values.append((dp, ZenEventClasses.Error))
                         result.events.append(dict(
@@ -80,5 +84,4 @@ class fsls(CommandParser):
                             eventClass='/Status/Filesystem/NFS',
                             component=cmd.component,
                         ))
-
         log.debug('fsls result: {}'.format(result))

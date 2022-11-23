@@ -3,7 +3,7 @@
 # or saved.  Do not modify them directly here.
 # NB: PACKAGES is deprecated
 NAME = "ZenPacks.community.NFS"
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 AUTHOR = "Laurent Hemeryck"
 LICENSE = "GPLv3"
 NAMESPACE_PACKAGES = ['ZenPacks', 'ZenPacks.community']
